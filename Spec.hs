@@ -2,6 +2,7 @@ import Test.Hspec
 import Chapter1
 import Chapter2
 import Chapter4
+import Chapter5
 
 main :: IO ()
 main = hspec $ do
@@ -79,3 +80,25 @@ main = hspec $ do
   describe "Chapter4.6 mult" $ do
     it "returns a product of arguments" $ do
       mult 2 3 4 `shouldBe` 24
+
+  describe "Chapter5.1 squaresuminhundred" $ do
+    it "returns a sum of square from 1 to 100" $ do
+      squaresuminhundred `shouldBe` sum (map (\x -> x^2) [1..100])
+  describe "Chapter5.2 replicate'" $ do
+    it "returns a list has same elements" $ do
+      replicate' 3 True `shouldBe` [True, True, True]
+  describe "Chapter5.3 pyths'" $ do
+    it "generates a list of Pythagoras number" $ do
+      pyths 10 `shouldBe` [(3,4,5), (4,3,5), (6,8,10), (8,6,10)]
+  describe "Chapter5.4 perfects" $ do
+    it "generates a list of perfect number that equals sum of factors except itself" $ do
+      perfects 500 `shouldBe` [6,28,496]
+  describe "Chapter5.5 comprehension has two generaters" $ do
+    it "can express double comprehension has one generater" $ do
+      comprehension_has_two_generaters `shouldBe` double_comprehension_has_one_generater
+  describe "Chapter5.6 positions" $ do
+    it "returns all indexes as a list refer the target values by the key" $ do
+      positions False [True, False, True, False] `shouldBe` [1,3]
+  describe "Chapter5.7 scalarproduct" $ do
+    it "returns scalar product by arg lists" $ do
+      scalarproduct [1,2,3] [4,5,6]  `shouldBe` 32
