@@ -35,3 +35,12 @@ qsort (x:xs) = qsort larger ++ [x] ++ qsort smaller
                where
                  smaller = [a | a <- xs, a <= x]
                  larger  = [b | b <- xs, b > x]
+
+-- 5.
+-- 重複した要素が取り除かれる
+qsort' :: Ord a => [a] -> [a]
+qsort' []     = []
+qsort' (x:xs) = qsort' smaller ++ [x] ++ qsort' larger
+               where
+                 smaller = [a | a <- xs, a < x]
+                 larger  = [b | b <- xs, b > x]
