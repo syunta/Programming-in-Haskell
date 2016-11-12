@@ -1,3 +1,5 @@
+module Chapter1 where
+
 -- 1.
 {-
  
