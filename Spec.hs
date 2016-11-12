@@ -101,4 +101,7 @@ main = hspec $ do
       positions False [True, False, True, False] `shouldBe` [1,3]
   describe "Chapter5.7 scalarproduct" $ do
     it "returns scalar product by arg lists" $ do
-      scalarproduct [1,2,3] [4,5,6]  `shouldBe` 32
+      scalarproduct [1,2,3] [4,5,6] `shouldBe` 32
+  describe "Chapter5.8 crack" $ do
+    it "can crack Caesar cipher contains upper case" $ do
+      crack "KDVNHOO lv IXQ !" `shouldBe` "HASKELL is FUN !"
