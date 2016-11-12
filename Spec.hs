@@ -1,6 +1,7 @@
 import Test.Hspec
 import Chapter1
 import Chapter2
+import Chapter4
 
 main :: IO ()
 main = hspec $ do
@@ -26,3 +27,55 @@ main = hspec $ do
     it "removes the last element of a list" $ do
       init' [1..5] `shouldBe` [1,2,3,4]
       init'' [1..5] `shouldBe` [1,2,3,4]
+
+  describe "Chapter4.1 halve" $ do
+    it "splits a list half-and-half as a tuple" $ do
+      halve [1..6] `shouldBe` ([1,2,3], [4,5,6])
+  describe "Chapter4.2 safetail" $ do
+    it "returns the rest of list exepts the first" $ do
+      safetail [1..5] `shouldBe` [2,3,4,5]
+      safetail' [1..5] `shouldBe` [2,3,4,5]
+      safetail'' [1..5] `shouldBe` [2,3,4,5]
+    it "does not trow an exception if used with an empty list" $ do
+      safetail ([] :: [Int]) `shouldBe` ([] :: [Int])
+      safetail' ([] :: [Int]) `shouldBe` ([] :: [Int])
+      safetail'' ([] :: [Int]) `shouldBe` ([] :: [Int])
+  describe "Chapter4.3 <||>" $ do
+    it "behaves as a logical disjunction" $ do
+      let a = True || True
+          b = True || False
+          c = False || True
+          d = False || False
+      True <||> True `shouldBe` a
+      True <||> False `shouldBe` b
+      False <||> True `shouldBe` c
+      False <||> False `shouldBe` d
+      True <|||> True `shouldBe` a
+      True <|||> False `shouldBe` b
+      False <|||> True `shouldBe` c
+      False <|||> False `shouldBe` d
+      True <||||> True `shouldBe` a
+      True <||||> False `shouldBe` b
+      False <||||> True `shouldBe` c
+      False <||||> False `shouldBe` d
+      True <|||||> True `shouldBe` a
+      True <|||||> False `shouldBe` b
+      False <|||||> True `shouldBe` c
+      False <|||||> False `shouldBe` d
+  describe "Chapter4.4, 4.5 <&&>" $ do
+    it "behaves as a logical conjunction" $ do
+      let a = True && True
+          b = True && False
+          c = False && True
+          d = False && False
+      True <&&> True `shouldBe` a
+      True <&&> False `shouldBe` b
+      False <&&> True `shouldBe` c
+      False <&&> False `shouldBe` d
+      True <&&&> True `shouldBe` a
+      True <&&&> False `shouldBe` b
+      False <&&&> True `shouldBe` c
+      False <&&&> False `shouldBe` d
+  describe "Chapter4.6 mult" $ do
+    it "returns a product of arguments" $ do
+      mult 2 3 4 `shouldBe` 24
