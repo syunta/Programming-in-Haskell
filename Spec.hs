@@ -4,6 +4,7 @@ import Chapter2
 import Chapter4
 import Chapter5
 import Chapter6
+import Chapter7
 
 main :: IO ()
 main = hspec $ do
@@ -142,3 +143,32 @@ main = hspec $ do
   describe "Chapter6.6 last''''" $ do
     it "returns the last element of a list" $ do
       last'''' [1,2,3,4] `shouldBe` 4
+
+  describe "Chapter7.1 mapfilter" $ do
+    it "ruturns a list applied filter and map" $ do
+      mapfilter (\x -> x * x) odd [1,2,3,4,5] `shouldBe` [1,9,25]
+  describe "Chapter7.2 all'" $ do
+    it "checks a list of all elements with predicate" $ do
+      all' odd [1,2,3,4,5] `shouldBe` False
+      all' odd [1,3,5] `shouldBe` True
+  describe "Chapter7.2 any'" $ do
+    it "checks a list whether contains an element satisfied predicate" $ do
+      any' even [1,2,3,4,5] `shouldBe` True
+      any' even [1,3,5] `shouldBe` False
+  describe "Chapter7.2 takeWhile'" $ do
+    it "takes a list of elements until fails checking predicate" $ do
+      takeWhile  even [2,4,5,6] `shouldBe` [2,4]
+      takeWhile' even [2,4,5,6] `shouldBe` [2,4]
+  describe "Chapter7.2 dropWhile'" $ do
+    it "drops a list of elements until fails checking predicate" $ do
+      dropWhile  even [2,4,5,6] `shouldBe` [5,6]
+      dropWhile' even [2,4,5,6] `shouldBe` [5,6]
+  describe "Chapter7.3 map'" $ do
+    it "maps a list of elements by argument function" $ do
+      map' (*2) [1,2,3] `shouldBe` [2,4,6]
+  describe "Chapter7.3 filter'" $ do
+    it "takes a list of elements sutisfied checking predicate" $ do
+      filter' even [1,2,3,4] `shouldBe` [2,4]
+  describe "Chapter7.4 dec2int" $ do
+    it "convert decimal notation to integer" $ do
+      dec2int [2,3,4,5] `shouldBe` 2345
