@@ -1,5 +1,7 @@
 module Chapter6 where
 
+import Chapter4
+
 -- 1.
 (<^>) :: Integral a => a -> a -> a
 _ <^> 0 = 1
@@ -59,3 +61,51 @@ init [1, 2, 3]
 
 -}
 
+-- 3.
+and' :: [Bool] -> Bool
+and' []     = True
+and' (False:_) = False
+and' (_:xs) = and' xs
+
+concat' :: [[a]] -> [a]
+concat' [] = []
+concat' (x:xs) = x ++ concat' xs
+
+replicate'' :: Int -> a -> [a]
+replicate'' 0 _ = []
+replicate'' n x = x : replicate'' (n - 1) x
+
+(<!!>) :: [a] -> Int -> a
+(x:xs) <!!> 0 = x
+(x:xs) <!!> n = xs <!!> (n - 1)
+
+elem' :: Eq a => a -> [a] -> Bool
+elem' _ [] = False
+elem' t (x:xs) = t == x || elem' t xs
+
+-- 4.
+merge :: Ord a => [a] -> [a] -> [a]
+merge [] ys         = ys
+merge xs []         = xs
+merge (x:xs) (y:ys) | x < y     = x : merge xs (y:ys)
+                    | otherwise = y : merge (x:xs) ys
+
+--5.
+msort :: Ord a => [a] -> [a]
+msort []  = []
+msort [x] = [x]
+msort xs  = merge (msort ys) (msort zs)
+            where (ys, zs) = halve xs
+
+--6.
+sum' :: Num a => [a] -> a
+sum' []     = 0
+sum' (x:xs) = x + sum' xs
+
+take' :: Int -> [a] -> [a]
+take' 0 xs     = []
+take' n (x:xs) = x : take' (n - 1) xs
+
+last'''' :: [a] -> a
+last'''' [x]    = x
+last'''' (_:xs) = last'''' xs

@@ -110,3 +110,35 @@ main = hspec $ do
   describe "Chapter6.1 <^>" $ do
     it "is a operator of power" $ do
       2 <^> 5 `shouldBe` 2^5
+  describe "Chapter6.3 and'" $ do
+    it "checks a list whether its all elements are True" $ do
+      and' [True, True, True] `shouldBe` True
+      and' [True, False, True] `shouldBe` False
+  describe "Chapter6.3 concat'" $ do
+    it "takes a list in lists and conjoins a list of elements" $ do
+      concat' [[1],[2],[3]] `shouldBe` [1,2,3]
+  describe "Chapter6.3 replicate'" $ do
+    it "returns a list has same elements" $ do
+      replicate'' 3 5 `shouldBe` [5, 5, 5]
+  describe "Chapter6.3 <!!>" $ do
+    it "returns an element targeted index" $ do
+      [1,2,3,4] <!!> 2 `shouldBe` 3
+  describe "Chapter6.3 elem'" $ do
+    it "checks a list whether contains a target element" $ do
+      elem' 4 [1,2,3,4,5] `shouldBe` True
+      elem' 7 [1,2,3,4,5] `shouldBe` False
+  describe "Chapter6.4 merge" $ do
+    it "takes two sorted lists and conjoins a sorted list" $ do
+      merge [2,5,6] [1,3,4] `shouldBe` [1,2,3,4,5,6]
+  describe "Chapter6.5 msort" $ do
+    it "behaves like a merge sort" $ do
+      msort [2,5,1,6,3,4] `shouldBe` [1,2,3,4,5,6]
+  describe "Chapter6.6 sum'" $ do
+    it "ruterns sum of list elements" $ do
+      sum' [1,2,3] `shouldBe` 6
+  describe "Chapter6.6 take'" $ do
+    it "returns a list contains targeted number elements" $ do
+      take' 3 [1,2,3,4,5] `shouldBe` [1,2,3]
+  describe "Chapter6.6 last''''" $ do
+    it "returns the last element of a list" $ do
+      last'''' [1,2,3,4] `shouldBe` 4
