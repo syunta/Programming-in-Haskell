@@ -3,6 +3,7 @@ import Chapter1
 import Chapter2
 import Chapter4
 import Chapter5
+import Chapter6
 
 main :: IO ()
 main = hspec $ do
@@ -105,3 +106,7 @@ main = hspec $ do
   describe "Chapter5.8 crack" $ do
     it "can crack Caesar cipher contains upper case" $ do
       crack "KDVNHOO lv IXQ !" `shouldBe` "HASKELL is FUN !"
+
+  describe "Chapter6.1 <^>" $ do
+    it "is a operator of power" $ do
+      2 <^> 5 `shouldBe` 2^5
