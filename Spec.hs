@@ -172,3 +172,21 @@ main = hspec $ do
   describe "Chapter7.4 dec2int" $ do
     it "convert decimal notation to integer" $ do
       dec2int [2,3,4,5] `shouldBe` 2345
+  describe "Chapter7.6 curry'" $ do
+    it "takes a function taking a tuple and returns a curry function" $ do
+      let test_add (x,y) = x + y
+          curry_add = curry' test_add
+      curry_add 3 7 `shouldBe` 10
+      (curry_add 3) 7 `shouldBe` 10
+  describe "Chapter7.6 uncurry'" $ do
+    it "takes a curry function and returns a function taking a tuple" $ do
+      (uncurry' (+)) (3,7) `shouldBe` 10
+  describe "Chapter7.7 chop8'" $ do
+    it "splits a bit list each 8 bit" $ do
+      chop8' [1,0,0,0,0,1,1,0,0,1,0,0,0,1,1,0,1,1,0,0,0,1,1,0] `shouldBe` [[1,0,0,0,0,1,1,0],[0,1,0,0,0,1,1,0],[1,1,0,0,0,1,1,0]]
+  describe "Chapter7.7 map''" $ do
+    it "maps a list of elements by argument function" $ do
+      map'' (*2) [1,2,3] `shouldBe` [2,4,6]
+  describe "Chapter7.7 iterate'" $ do
+    it "generates an infinite list" $ do
+      take 4 (iterate' (*3) 1) `shouldBe` [1,3,9,27]
