@@ -1,4 +1,5 @@
 import Test.Hspec
+import Control.Exception (evaluate, catch)
 import Chapter1
 import Chapter2
 import Chapter4
@@ -190,3 +191,16 @@ main = hspec $ do
   describe "Chapter7.7 iterate'" $ do
     it "generates an infinite list" $ do
       take 4 (iterate' (*3) 1) `shouldBe` [1,3,9,27]
+  describe "Chapter7.8 parity" $ do
+    it "appends 0 to bits if that has odd ones" $ do
+      parity [0,1,0,0] `shouldBe` [1,0,1,0,0]
+    it "appends 0 to bits if that has even ones" $ do
+      parity [1,0,1,0] `shouldBe` [0,1,0,1,0]
+  describe "Chapter7.8 unparity" $ do
+    it "removes a head of parity bit if bits is valid" $ do
+      unparity [1,0,1,0,0] `shouldBe` [0,1,0,0]
+    it "throws an exception if bits is invalid" $ do
+      evaluate (unparity [1,1,1,0,0]) `shouldThrow` anyException
+  describe "Chapter7.8 transmit" $ do
+    it "encodes string to bits with parity bit and decodes bits to string without parity bit" $ do
+      transmit "succeed" `shouldBe` "succeed"

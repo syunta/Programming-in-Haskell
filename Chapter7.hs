@@ -1,5 +1,7 @@
 module Chapter7 where
 
+import Data.Char
+
 -- 1.
 mapfilter :: (a -> b) -> (a -> Bool) -> [a] -> [b]
 mapfilter f p = (map f) . (filter p)
@@ -68,3 +70,49 @@ map'' f xs = unfold null (f . head) tail xs
 iterate' :: (a -> a) -> a -> [a]
 iterate' f x = unfold fail id f x
                where fail _ = False
+
+-- 8.
+-- Base conversion
+bin2int :: [Bit] -> Int
+bin2int = foldr (\x y -> x + 2*y) 0
+
+int2bin :: Int -> [Bit]
+int2bin 0 = []
+int2bin n = n `mod` 2 : int2bin (n `div` 2)
+
+make8 :: [Bit] -> [Bit]
+make8 bits = take 8 (bits ++ repeat 0)
+
+-- Transmission
+count :: Eq a => a -> [a] -> Int -- added
+count t = length . (filter (==t))
+
+parity :: [Bit] -> [Bit] -- added
+parity bits | odd . (count 1) $ bits = 1 : bits
+            | otherwise              = 0 : bits
+
+unparity :: [Bit] -> [Bit] -- added
+unparity bits | head bits == 1 && odd ones  = tail bits
+              | head bits == 0 && even ones = tail bits
+              | otherwise = error "ParityError"
+                where ones = (count 1) . tail $ bits
+
+encode :: String -> [Bit]
+encode = concat . map (parity . make8 . int2bin . ord) -- modified
+
+chop9 :: [Bit] -> [[Bit]] -- added
+chop9 []   = []
+chop9 bits = take 9 bits : chop9 (drop 9 bits)
+
+decode :: [Bit] -> String
+decode = map (chr . bin2int . unparity) . chop9 --modified
+
+transmit :: String -> String
+transmit = decode . channel . encode
+
+channel :: [Bit] -> [Bit]
+channel = id
+
+-- 9.
+noisytransmit :: String -> String
+noisytransmit = decode . tail . encode
