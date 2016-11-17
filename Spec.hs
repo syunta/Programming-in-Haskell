@@ -6,6 +6,7 @@ import Chapter4
 import Chapter5
 import Chapter6
 import Chapter7
+import Chapter8
 
 main :: IO ()
 main = hspec $ do
@@ -204,3 +205,9 @@ main = hspec $ do
   describe "Chapter7.8 transmit" $ do
     it "encodes string to bits with parity bit and decodes bits to string without parity bit" $ do
       transmit "succeed" `shouldBe` "succeed"
+
+  describe "Chapter8.1 int'" $ do
+    it "parses integer" $ do
+      parse int "-123d" `shouldBe` [(-123,"d")]
+      parse int "123" `shouldBe` [(123,"")]
+      parse int "adb" `shouldBe` []
