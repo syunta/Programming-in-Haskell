@@ -211,3 +211,7 @@ main = hspec $ do
       parse int "-123d" `shouldBe` [(-123,"d")]
       parse int "123" `shouldBe` [(123,"")]
       parse int "adb" `shouldBe` []
+  describe "Chapter8.2 comment" $ do
+    it "parses comment of haskell" $ do
+      parse comment "--abc\n" `shouldBe` [((),"")]
+      parse comment "--abc\ndef" `shouldBe` [((),"def")]
