@@ -215,3 +215,14 @@ main = hspec $ do
     it "parses comment of haskell" $ do
       parse comment "--abc\n" `shouldBe` [((),"")]
       parse comment "--abc\ndef" `shouldBe` [((),"def")]
+  describe "Chapter8.6 eval" $ do
+    it "calculates substraction" $ do
+      eval "10 - 2" `shouldBe` 8
+    it "calculates division" $ do
+      eval "10 / 2" `shouldBe` 5
+    it "calculates substraction within division" $ do
+      eval "10 - 10 / 5" `shouldBe` 8
+  describe "Chapter8.7 eval" $ do
+    it "calculates exponentiation" $ do
+      eval "10 ^ 2" `shouldBe` 100
+      eval "10 ^ (2 + 1)" `shouldBe` 1000

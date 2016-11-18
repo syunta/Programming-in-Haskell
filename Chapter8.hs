@@ -104,3 +104,73 @@ nat     factor  *   term
                |
                3
 -}
+
+-- 5.
+{-
+
+最後の簡略化がない場合、3 のような式では次のように解析されうる
+
+term -> factor -> nat 3 の解析後、続く文字に + がないので単項であると分かり、
+
+もう一度 term -> factor -> nat 3 の解析を行う
+
+簡略化をすると解析は一回で済む。
+
+-}
+
+-- 6. 7.
+
+{-
+
+expr ::= term ('+' expr | '-' expr | ε)
+term ::= expt ('*' term | '/' term | ε)
+expt ::= factor ('^' expr | ε)
+factor ::= '(' expr ')' | nat
+nat ::= '0' | '1' | '2' | ...
+
+-}
+
+expr :: Parser Int
+expr = do t <- term
+          do symbol "+"
+             e <- expr
+             return (t + e)
+           <|>
+           do symbol "-" -- added for 6
+              e <- expr
+              return (t - e)
+           <|>
+           return t
+
+term :: Parser Int
+term = do e <- expt -- modified for 7
+          do symbol "*"
+             t <- term
+             return (e * t)
+           <|>
+           do symbol "/" -- added for 6
+              t <- term
+              return (e `div` t) -- 型の変更が面倒なので div を使用
+           <|>
+           return e
+
+expt :: Parser Int -- added for 7
+expt = do f <- factor
+          do symbol "^"
+             e <- expr
+             return (f ^ e)
+           <|>
+           return f
+
+factor :: Parser Int
+factor = do symbol "("
+            e <- expr
+            symbol ")"
+            return e
+          <|> natural
+
+eval :: String -> Int
+eval xs = case (parse expr xs) of
+             [(n,[])]  -> n
+             [(_,out)] -> error ("Unused input " ++ out)
+             []        -> error "Invalid input"
