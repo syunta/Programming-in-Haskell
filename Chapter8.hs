@@ -174,3 +174,32 @@ eval xs = case (parse expr xs) of
              [(n,[])]  -> n
              [(_,out)] -> error ("Unused input " ++ out)
              []        -> error "Invalid input"
+-- 8.
+-- a.
+{-
+
+expr ::= expr '-' nat | nat
+nat ::= '0' | '1' | '2' | ...
+
+-}
+
+-- b.
+expr' :: Parser Int
+expr' = do e <- expr'
+           symbol "-"
+           n <- nat
+           return (e - n)
+         <|>
+         do n <- nat
+            return n
+
+-- c.
+-- 上記のように素直に実装すると無限ループに陥る
+
+-- d.
+expr'' :: Parser Int
+expr'' = do n <- nat
+            ns <- many (do symbol "-"
+                           n' <- nat
+                           return n')
+            return (foldl (-) n ns)

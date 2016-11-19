@@ -226,3 +226,6 @@ main = hspec $ do
     it "calculates exponentiation" $ do
       eval "10 ^ 2" `shouldBe` 100
       eval "10 ^ (2 + 1)" `shouldBe` 1000
+  describe "Chapter8.8 expr''" $ do
+    it "calculates left associative substraction" $ do
+      parse expr'' "10 - 5 - 3" `shouldBe` [(2, "")]
