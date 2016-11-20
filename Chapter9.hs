@@ -3,6 +3,7 @@ module Chapter9 where
 import Parsing
 import Chapter8
 import System.IO
+import Data.List (union, deleteBy)
 
 type Pos = (Int,Int)
 
@@ -177,3 +178,38 @@ life b = do cls
 
 wait :: Int -> IO ()
 wait n = sequence_ [return () | _ <- [1..n]]
+
+-- 4.
+editorusage :: [String]
+editorusage = ["h: left, j: down, k: up, l: right, q: exit",
+               "enter: put creature, del: remove creature"]
+
+showeditor :: Board -> IO ()
+showeditor b = do sequence_ [writeat (1,y) b | (y,b) <- zip [1..] (frame ++ editorusage)]
+                  sequence_ [writeat p "O" | p <- b]
+               where
+                 frame = replicate height (replicate width ' ' ++ "*") ++ [replicate (width + 1) '*']
+
+editboard :: Pos -> Board -> IO Board
+editboard (x,y) b = do goto (x,y)
+                       ch <- getCh
+                       case ch of
+                         'h' -> editboard (wrap (x-1,y)) b
+                         'j' -> editboard (wrap (x,y+1)) b
+                         'k' -> editboard (wrap (x,y-1)) b
+                         'l' -> editboard (wrap (x+1,y)) b
+                         '\n' -> do let b' = [(x,y)] `union` b
+                                    showeditor b'
+                                    editboard (x,y) b'
+                         '\DEL' -> do let b' = deleteBy (==) (x,y) b
+                                      showeditor b'
+                                      editboard (x,y) b'
+                         'q' -> do goto (1,width + 4)
+                                   return b
+                         _ -> do beep
+                                 editboard (x,y) b
+
+runboardeditor :: Board -> IO Board
+runboardeditor b = do cls
+                      showeditor b
+                      editboard (1,1) b
