@@ -7,6 +7,7 @@ import Chapter5
 import Chapter6
 import Chapter7
 import Chapter8
+import Chapter10
 
 main :: IO ()
 main = hspec $ do
@@ -229,3 +230,18 @@ main = hspec $ do
   describe "Chapter8.8 expr''" $ do
     it "calculates left associative substraction" $ do
       parse expr'' "10 - 5 - 3" `shouldBe` [(2, "")]
+
+  describe "Chapter10.1 mult" $ do
+    it "calculates multiplication" $ do
+      mult' (Succ (Succ (Succ Zero))) (Succ (Succ Zero)) `shouldBe` (Succ (Succ (Succ (Succ (Succ (Succ Zero))))))
+  describe "Chapter10.2 occurs" $ do
+    it "checks a tree whether contains a target element" $ do
+      let t = Node (Node (Leaf 1) 3 (Leaf 4)) 5 (Node (Leaf 6) 7 (Leaf 9))
+      occurs 1 t `shouldBe` True
+      occurs 3 t `shouldBe` True
+      occurs 4 t `shouldBe` True
+      occurs 5 t `shouldBe` True
+      occurs 6 t `shouldBe` True
+      occurs 7 t `shouldBe` True
+      occurs 9 t `shouldBe` True
+      occurs 2 t `shouldBe` False
