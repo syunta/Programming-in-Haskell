@@ -3,7 +3,8 @@ module Chapter9 where
 import Parsing
 import Chapter8
 import System.IO
-import Data.List (union, deleteBy)
+import Data.List (union, deleteBy, splitAt)
+import Data.Char
 
 type Pos = (Int,Int)
 
@@ -186,7 +187,7 @@ editorusage = ["h: left, j: down, k: up, l: right, q: exit",
 
 showeditor :: Board -> IO ()
 showeditor b = do sequence_ [writeat (1,y) b | (y,b) <- zip [1..] (frame ++ editorusage)]
-                  sequence_ [writeat p "O" | p <- b]
+                  showcells b
                where
                  frame = replicate height (replicate width ' ' ++ "*") ++ [replicate (width + 1) '*']
 
@@ -213,3 +214,63 @@ runboardeditor :: Board -> IO Board
 runboardeditor b = do cls
                       showeditor b
                       editboard (1,1) b
+
+-- 5.
+-- skip
+
+-- 6.
+type Player = Bool
+
+shownim :: Player -> [Int] -> IO ()
+shownim p ns = sequence_ [writeat (1,y) b | (y,b) <- zip [1..] (lines ++ [info])]
+               where
+                 stars = map (`replicate` '*') ns
+                 lines = [(show n) ++ ":" ++ s | (n,s) <- zip [1..] stars]
+                 info = case p of
+                          True -> "Player1 Turn"
+                          _ -> "Player2 Turn"
+
+clearmessage :: IO ()
+clearmessage = showmessage "                          "
+
+showmessage :: String -> IO ()
+showmessage x = writeat (1,7) x
+
+selectnumber :: String -> IO Int
+selectnumber m = do clearmessage
+                    showmessage m
+                    s <- readLine
+                    if (not . null) s && all isDigit s then
+                      do return (read s :: Int)
+                    else
+                      do beep
+                         selectnumber m
+
+substar :: Int -> Int -> [Int] -> [Int]
+substar n x ns = let (xs,ys) = splitAt n ns
+                 in init xs ++ [(last xs) - x] ++ ys
+
+isendnim :: [Int] -> Bool
+isendnim = all (<=0)
+
+endnim :: Player -> IO ()
+endnim p = do clearmessage
+              case p of
+                True -> showmessage "Player1 win!"
+                _ -> showmessage "Player2 win!"
+
+runnim :: IO ()
+runnim = nim True [5,4,3,2,1]
+
+nim :: Player -> [Int] -> IO ()
+nim p ns = do cls
+              shownim p ns
+              n <- selectnumber "select row: "
+              x <- selectnumber "remove star: "
+              let ns' = substar n x ns
+              if isendnim ns' then
+                do cls
+                   shownim p ns'
+                   endnim p
+              else
+                nim (not p) ns'
