@@ -1,6 +1,7 @@
 module Chapter10 where
 
 import Chapter4 (halve)
+import Chapter9 (rmdups)
 
 data Nat = Zero | Succ Nat
            deriving (Show, Eq)
@@ -10,10 +11,10 @@ add :: Nat -> Nat -> Nat
 add Zero n = n
 add (Succ m) n = Succ (add m n)
 
-mult' :: Nat -> Nat -> Nat
-mult' Zero _ = Zero
-mult' _ Zero = Zero
-mult' m (Succ n) = add m (mult' m n)
+mult :: Nat -> Nat -> Nat
+mult Zero _ = Zero
+mult _ Zero = Zero
+mult m (Succ n) = add m (mult m n)
 
 -- 2.
 data Tree = Leaf Int | Node Tree Int Tree
@@ -66,14 +67,14 @@ find k t = head [v | (k',v) <- t, k == k']
 
 -- Tautology checker
 
-eval' :: Subst -> Prop -> Bool
-eval' _ (Const b)   = b
-eval' s (Var x)     = find x s
-eval' s (Not p)     = not (eval' s p)
-eval' s (And p q)   = eval' s p && eval' s q
-eval' s (Or p q)    = eval' s p || eval' s q
-eval' s (IFF p q)   = eval' s p == eval' s q
-eval' s (Imply p q) = eval' s p <= eval' s q
+eval :: Subst -> Prop -> Bool
+eval _ (Const b)   = b
+eval s (Var x)     = find x s
+eval s (Not p)     = not (eval s p)
+eval s (And p q)   = eval s p && eval s q
+eval s (Or p q)    = eval s p || eval s q
+eval s (IFF p q)   = eval s p == eval s q
+eval s (Imply p q) = eval s p <= eval s q
 
 vars :: Prop -> [Char]
 vars (Const _)   = []
@@ -87,13 +88,9 @@ bools 0 = [[]]
 bools n = map (False:) bss ++ map (True:) bss
           where bss = bools (n-1)
 
-rmdups :: Eq a => [a] -> [a]
-rmdups []     = []
-rmdups (x:xs) = x : filter (/= x) (rmdups xs)
-
 substs :: Prop -> [Subst]
 substs p = map (zip vs) (bools (length vs))
            where vs = rmdups (vars p)
 
 isTaut :: Prop -> Bool
-isTaut p = and [eval' s p | s <- substs p]
+isTaut p = and [eval s p | s <- substs p]
