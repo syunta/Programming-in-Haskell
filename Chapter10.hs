@@ -1,7 +1,9 @@
-module Chapter10 where
+module Chapter10 (module Chapter10, module Parsing) where
 
 import Chapter4 (halve)
-import Chapter9 (rmdups)
+import Chapter9 (rmdups, readLine)
+import Parsing
+import Data.Char
 
 data Nat = Zero | Succ Nat
            deriving (Show, Eq)
@@ -48,13 +50,14 @@ balance xs  = case halve xs of
 
 -- Propositions
 
-data Prop = Const Bool
+data Prop = Cont Bool
           | Var Char
           | Not Prop
           | And Prop Prop
           | Or Prop Prop
           | IFF Prop Prop
           | Imply Prop Prop
+          deriving Show
 
 -- Substitutions
 
@@ -68,7 +71,7 @@ find k t = head [v | (k',v) <- t, k == k']
 -- Tautology checker
 
 eval :: Subst -> Prop -> Bool
-eval _ (Const b)   = b
+eval _ (Cont b)    = b
 eval s (Var x)     = find x s
 eval s (Not p)     = not (eval s p)
 eval s (And p q)   = eval s p && eval s q
@@ -77,10 +80,12 @@ eval s (IFF p q)   = eval s p == eval s q
 eval s (Imply p q) = eval s p <= eval s q
 
 vars :: Prop -> [Char]
-vars (Const _)   = []
+vars (Cont _)    = []
 vars (Var x)     = [x]
 vars (Not p)     = vars p
 vars (And p q)   = vars p ++ vars q
+vars (Or p q)    = vars p ++ vars q
+vars (IFF p q)   = vars p ++ vars q
 vars (Imply p q) = vars p ++ vars q
 
 bools :: Int -> [[Bool]]
@@ -94,3 +99,64 @@ substs p = map (zip vs) (bools (length vs))
 
 isTaut :: Prop -> Bool
 isTaut p = and [eval s p | s <- substs p]
+
+-- 6.
+{-
+
+prop   ::= term ('^' term | '=>' term | 'v' term | '==' term | ε)
+term   ::= '¬' factor | factor
+factor ::= '(' prop ')' | var
+var    ::= 'A' | 'B'
+
+ -}
+
+prop :: Parser Prop
+prop = do t1 <- term
+          do symbol "^"
+             t2 <- term
+             return (And t1 t2)
+           <|>
+           do symbol "=>"
+              t2 <- term
+              return (Imply t1 t2)
+           <|>
+           do symbol "v"
+              t2 <- term
+              return (Or t1 t2)
+           <|>
+           do symbol "=="
+              t2 <- term
+              return (IFF t1 t2)
+           <|>
+           return t1
+
+term :: Parser Prop
+term = do symbol "¬"
+          f <- factor
+          return (Not f)
+        <|>
+        do f <- factor
+           return f
+
+factor :: Parser Prop
+factor = do symbol "("
+            p <- prop
+            symbol ")"
+            return p
+          <|>
+          do c <- var
+             return (Var c)
+
+var :: Parser Char
+var = (char 'A') <|> (char 'B')
+
+runTaut :: IO ()
+runTaut = do xs <- readLine
+             case parse prop xs of
+               [(p,[])]  -> do let b = isTaut p
+                               putStrLn (show b)
+                               return ()
+               [(_,out)] -> do putStrLn "Unused unput, try again"
+                               runTaut
+               []        -> do putStrLn "Invalid input, try again"
+                               runTaut

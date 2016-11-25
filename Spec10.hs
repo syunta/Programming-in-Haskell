@@ -44,3 +44,10 @@ main = hspec $ do
       eval t2 (IFF (Var 'A') (Var 'B')) `shouldBe` False
       eval t3 (IFF (Var 'A') (Var 'B')) `shouldBe` False
       eval t4 (IFF (Var 'A') (Var 'B')) `shouldBe` True
+  describe "Chapter10.6 parse prop" $ do
+    it "parses string to proposition expression" $ do
+      let testTaut = isTaut . fst . head . (parse prop)
+      testTaut "A ^ ¬ B" `shouldBe` False
+      testTaut "A => (A ^ B)" `shouldBe` False
+      testTaut "(A ^ B) => A" `shouldBe` True
+      testTaut "(A ^ (A => B)) => B" `shouldBe` True
