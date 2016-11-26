@@ -7,7 +7,7 @@ import Chapter5
 import Chapter6
 import Chapter7
 import Chapter8
-import Chapter10
+import Chapter11
 
 main :: IO ()
 main = hspec $ do
@@ -230,3 +230,6 @@ main = hspec $ do
   describe "Chapter8.8 expr''" $ do
     it "calculates left associative substraction" $ do
       parse expr'' "10 - 5 - 3" `shouldBe` [(2, "")]
+  describe "Chapter11.1 choices'" $ do
+    it "behaves as original choices" $ do
+      choices' [1,2,3] `shouldBe` choices [1,2,3]
