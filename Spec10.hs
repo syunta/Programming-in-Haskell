@@ -51,3 +51,20 @@ main = hspec $ do
       testTaut "A => (A ^ B)" `shouldBe` False
       testTaut "(A ^ B) => A" `shouldBe` True
       testTaut "(A ^ (A => B)) => B" `shouldBe` True
+  describe "Chapter10.7 value" $ do
+    it "supports addtion" $ do
+      value (Add (Val 2) (Add (Val 2) (Val 3))) `shouldBe` 7
+    it "supports multiplication" $ do
+      value (Mul (Val 2) (Mul (Val 2) (Val 3))) `shouldBe` 12
+    it "supports addition and multiplication" $ do
+      value (Add (Val 2) (Mul (Val 2) (Val 3))) `shouldBe` 8
+  describe "Chapter10.8 My-Maybe" $ do
+    it "propagates failure" $ do
+      hothing 10 `shouldBe` Hothing
+    it "can use do notation" $ do
+      triple 10 `shouldBe` Hust 30
+  describe "Chapter10.8 My-List" $ do
+    it "propagates failure" $ do
+      nil 10 `shouldBe` Nil
+    it "can use do notation" $ do
+      quantaple 10 `shouldBe` Cell 40 Nil

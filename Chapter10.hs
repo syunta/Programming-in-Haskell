@@ -160,3 +160,105 @@ runTaut = do xs <- readLine
                                runTaut
                []        -> do putStrLn "Invalid input, try again"
                                runTaut
+
+-- 7.
+data Expr = Val Int | Add Expr Expr | Mul Expr Expr
+
+type Cont = [Op]
+
+data Op = EVALA Expr | ADD Int | EVALM Expr | MUL Int
+
+eval' :: Expr -> Cont -> Int
+eval' (Val n) c   = exec c n
+eval' (Mul x y) c = eval' x (EVALM y : c)
+eval' (Add x y) c = eval' x (EVALA y : c)
+
+exec :: Cont -> Int -> Int
+exec [] n           = n
+exec (EVALM y : c) n = eval' y (MUL n : c)
+exec (EVALA y : c) n = eval' y (ADD n : c)
+exec (MUL n : c) m  = exec c (n * m)
+exec (ADD n : c) m  = exec c (n + m)
+
+value :: Expr -> Int
+value e = eval' e []
+
+-- 8.
+-- insead of Monad Maybe
+data Haybe a = Hothing | Hust a
+               deriving (Show, Eq)
+
+instance Functor Haybe where
+   -- fmap :: (a -> b) -> Haybe a -> Haybe b
+   fmap _ Hothing = Hothing
+   fmap f (Hust x) = Hust (f x)
+
+instance Applicative Haybe where
+   -- pure :: a -> Haybe a
+   pure x = Hust x
+   -- <*> :: Haybe (a -> b) -> Haybe a -> Haybe b
+   _      <*> Hothing = Hothing
+   Hust f <*> Hust x  = Hust (f x)
+
+instance Monad Haybe where
+  -- return :: a -> Haybe a
+  return x = Hust x
+  -- (>>=) :: Haybe a -> (a -> HayBe b) -> Haybe b
+  Hothing  >>= _ = Hothing
+  (Hust x) >>= f = f x
+
+hothing :: Int -> Haybe Int
+hothing x = do Hothing
+               Hust x
+
+triple :: Int -> Haybe Int
+triple x = do y <- Hust (x + x)
+              z <- Hust (y + x)
+              return z
+
+-- insead of Monad []
+data Cell a = Nil | Cell a (Cell a)
+              deriving (Show, Eq)
+
+instance Functor Cell where
+   -- fmap :: (a -> b) -> Cell a -> Cell b
+   fmap _ Nil = Nil
+   fmap f (Cell x xs) = Cell (f x) (fmap f xs)
+
+append :: Cell a -> Cell a -> Cell a
+append Nil ys = ys
+append (Cell x xs) ys = Cell x (append xs ys)
+
+instance Applicative Cell where
+   -- pure :: a -> Cell a
+   pure x = Cell x Nil
+   -- <*> :: Cell (a -> b) -> Cell a -> Cell b
+   _         <*> Nil = Nil
+   Nil       <*> _   = Nil
+   Cell f fs <*> xs  = fmap f xs `append` (fs <*> xs)
+
+instance Monad Cell where
+  -- return :: a -> Cell a
+  return x = Cell x Nil
+  -- (>>=) :: Cell a -> (a -> Cell b) -> Cell b
+  Nil         >>= _ = Nil
+  (Cell x xs) >>= f = (f x) `append` (xs >>= f)
+
+--instance Monad [] where
+--  return :: a -> [a]
+--  return x = [x]
+--
+--  (>>=) :: [a] -> (a -> [b]) -> [b]
+--  []     >>= _ = []
+--  (x:xs) >>= f = (f x) ++ (xs >>= f)
+
+nil :: Int -> Cell Int
+nil x = do return x
+           Nil
+           return x
+
+quantaple :: Int -> Cell Int
+quantaple w = do x <- Cell (w + w) Nil
+                 y <- Cell (x + w) Nil
+                 z <- Cell (y + w) Nil
+                 return z
