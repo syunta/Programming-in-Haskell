@@ -5,13 +5,14 @@ module CountDown where
 
 -- Arithmetic operators
 
-data Op = Add | Sub | Mul | Div
+data Op = Add | Sub | Mul | Div | Exp
 
 instance Show Op where
    show Add = "+"
    show Sub = "-"
    show Mul = "*"
    show Div = "/"
+   show Exp = "^"
 
 valid :: Op -> Int -> Int -> Bool
 valid Add _ _ = True
@@ -110,30 +111,3 @@ combine' (l,x) (r,y) = [(App o l r, apply o x y) | o <- ops, valid o x y]
 
 solutions' :: [Int] -> Int -> [Expr]
 solutions' ns n = [e | ns' <- choices ns, (e,m) <- results ns', m == n]
-
--- Exploiting algebraic properties
-
-valid' :: Op -> Int -> Int -> Bool
-valid' Add x y = x <= y
-valid' Sub x y = x > y
-valid' Mul x y = x /= 1 && y /= 1 && x <= y
-valid' Div x y = y /= 1 && x `mod` y == 0
-
-results' :: [Int] -> [Result]
-results' []  = []
-results' [n] = [(Val n,n) | n > 0]
-results' ns  = [res | (ls,rs) <- split ns,
-                       lx     <- results' ls,
-                       ry     <- results' rs,
-                       res    <- combine'' lx ry]
-
-combine'' :: Result -> Result -> [Result]
-combine'' (l,x) (r,y) = [(App o l r, apply o x y) | o <- ops, valid' o x y]
-
-solutions'' :: [Int] -> Int -> [Expr]
-solutions'' ns n = [e | ns' <- choices ns, (e,m) <- results' ns', m == n]
-
--- Performance testing
-
---main :: IO ()
---main = print (solutions'' [1,3,7,10,25,50] 765)
