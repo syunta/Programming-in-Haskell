@@ -1,6 +1,8 @@
 -- Countdown example from chapter 9 of Programming in Haskell,
 -- Graham Hutton, Cambridge University Press, 2016.
 
+module CountDown where
+
 -- Arithmetic operators
 
 data Op = Add | Sub | Mul | Div
@@ -133,5 +135,5 @@ solutions'' ns n = [e | ns' <- choices ns, (e,m) <- results' ns', m == n]
 
 -- Performance testing
 
-main :: IO ()
-main = print (solutions'' [1,3,7,10,25,50] 765)
+--main :: IO ()
+--main = print (solutions'' [1,3,7,10,25,50] 765)
