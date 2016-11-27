@@ -233,3 +233,10 @@ main = hspec $ do
   describe "Chapter11.1 choices'" $ do
     it "behaves as original choices" $ do
       choices' [1,2,3] `shouldBe` choices [1,2,3]
+  describe "Chapter11.2 isChoice" $ do
+    it "checks a list whether it is chosen by the other list" $ do
+      isChoice [] [1,2,3] `shouldBe` True
+      isChoice [2] [1,2,3] `shouldBe` True
+      isChoice [3,1] [1,2,3] `shouldBe` True
+      isChoice [2,1,3] [1,2,3] `shouldBe` True
+      isChoice [1,4] [1,2,3] `shouldBe` False
