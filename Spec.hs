@@ -8,6 +8,7 @@ import Chapter6
 import Chapter7
 import Chapter8
 import Chapter11
+import Chapter12
 
 main :: IO ()
 main = hspec $ do
@@ -240,3 +241,25 @@ main = hspec $ do
       isChoice [3,1] [1,2,3] `shouldBe` True
       isChoice [2,1,3] [1,2,3] `shouldBe` True
       isChoice [1,4] [1,2,3] `shouldBe` False
+
+  describe "Chapter12.4 fibs" $ do
+    it "generates fibonacci series" $ do
+      take 10 fibs `shouldBe` [0,1,1,2,3,5,8,13,21,34]
+  describe "Chapter12.5 fib" $ do
+    it "returns a fibonacci number" $ do
+      fib 0 `shouldBe` 0
+      fib 5 `shouldBe` 5
+      fib 10 `shouldBe` 55
+  describe "Chapter12.5 getFib" $ do
+    it "returns a first fibonacci number greater than target number" $ do
+      getFib 1000 `shouldBe` 1597
+  describe "Chapter12.6 repeatTree" $ do
+    it "returns an infinity tree filled by target element" $ do
+      takeTree 1 (repeatTree 3) `shouldBe` Node Leaf 3 Leaf
+  describe "Chapter12.6 takeTree" $ do
+    it "takes a tree of target depth from a tree" $ do
+      takeTree 0 (repeatTree 2) `shouldBe` Leaf
+      takeTree 2 (repeatTree 2) `shouldBe` Node (Node Leaf 2 Leaf) 2 (Node Leaf 2 Leaf)
+  describe "Chapter12.6 replicateTree" $ do
+    it "returns a tree filled by target element and target depth" $ do
+      replicateTree 2 'c' `shouldBe` Node (Node Leaf 'c' Leaf) 'c' (Node Leaf 'c' Leaf)

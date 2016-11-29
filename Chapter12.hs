@@ -49,3 +49,38 @@ mult 3 4
 12
 
 -}
+
+-- 4.
+fibs1 :: [Integer]
+fibs1 = fibgen 0 1
+        where fibgen a b = a : fibgen b (a + b)
+
+fibs :: [Integer]
+fibs = 0 : 1 : [x + y | (x,y) <- zip fibs (tail fibs)]
+
+-- 5.
+fib :: Int -> Integer
+fib n = fibs !! n
+
+getFib :: Integer -> Integer
+getFib n = head (dropWhile (<=n) fibs)
+
+-- 6.
+data Tree a = Leaf | Node (Tree a) a (Tree a)
+              deriving Eq
+
+instance (Show a) => Show (Tree a) where
+   show Leaf         = "()"
+   show (Node l x r) = "(" ++ (show l) ++ " " ++ (show x) ++ " " ++ (show r) ++ ")"
+
+repeatTree :: a -> Tree a
+repeatTree x = tree where tree = Node tree x tree
+
+takeTree :: Int -> Tree a -> Tree a
+takeTree 0 _            = Leaf
+takeTree n Leaf         = Leaf
+takeTree n (Node l x r) = Node (takeTree m l) x (takeTree m r)
+                          where m = n - 1
+
+replicateTree :: Int -> a -> Tree a
+replicateTree n = (takeTree n) . repeatTree
