@@ -228,3 +228,115 @@ ns = (z:zs) のとき :
 3. の証明終了
 
 -}
+
+-- 6.
+{-
+
+分配法則の方が汎用的だから？
+
+-}
+
+-- 7.
+{-
+
+map :: (a -> b) -> [a] -> [b]
+map f [] = []
+map f (x:xs) = f x : map f xs
+
+(.) :: (b -> c) -> (a -> b) -> a -> c
+(f . g) x = f (g x)
+
+map f (map g xs) = map (f . g) xs であることをxsに対する数学的帰納法で示す
+
+xs = [] のとき :
+
+{左辺} = map f (map g [])
+       = { 内の map を適用 }
+       = map f []
+       = { map を適用 }
+       = []
+
+{右辺} = map (f . g) []
+       = { map を適用 }
+       = []
+
+xs = ns のとき、以下が成り立つと仮定する :
+
+map f (map g ns) = map (f . g) ns
+
+ns = (x:xs) のとき :
+
+{左辺} = map f (map g (x:xs))
+       = { 内の map を適用 }
+       = map f ((g x) : map g xs)
+       = { map を適用 }
+       = f (g x) : map f (map g xs)
+       = { 仮定より }
+       = f (g x) : map (f . g) xs
+       = { (f . g) を逆適用 }
+       = (f . g) x : map (f . g) xs
+       = { map を逆適用 }
+       = map (f . g) (x:xs)
+-}
+
+-- 8.
+{-
+
+take :: Int -> [a] -> [a]
+take 0 _            = []
+take (n + 1) []     = []
+take (n + 1) (x:xs) = x : take n xs
+
+drop :: Int -> [a] -> [a]
+drop 0 xs           = xs
+drop (n + 1) []     = []
+drop (n + 1) (_:xs) = drop n xs
+
+take n xs ++ drop n xs = xs を0以上の整数nとxsに対して同時に数学的帰納法で示す
+
+n = x, xs = ns のとき、以下が成り立つと仮定する :
+
+take x ns ++ drop x ns = ns
+
+x = 0 のとき :
+
+{左辺} = take 0 ns ++ drop 0 ns
+       = { take, drop を適用 }
+       = [] ++ ns
+       = { ++ を適用 }
+       = ns
+
+{右辺} = xs
+
+ns = [] のとき :
+
+{左辺} = take x [] ++ drop x []
+       = { take, drop を適用 }
+       = [] ++ []
+       = { ++ を適用 }
+       = []
+
+{右辺} = []
+
+x = n + 1 のとき :
+
+{左辺} = take (n + 1) ns ++ drop (n + 1) ns
+       = { take, drop を適用 (ns = x:xs) }
+       = (x : take n xs) ++ drop n xs
+       = { (x:xs) ++ ys = x : (xs ++ ys) の性質より }
+       = x : (take n xs ++ drop n xs)
+       = { 仮定より }
+       = x : xs
+       = { ns = x:xs より }
+       = ns
+
+ns = (x:xs) のとき :
+
+{左辺} = take x (x:xs) ++ drop x (x:xs)
+       = { take, drop を適用 (x = n + 1) }
+       = (x : take (n + 1) xs) ++ drop (n + 1) xs
+       = { (x:xs) ++ ys = x : (xs ++ ys) の性質より }
+       = x : (take (n + 1) xs ++ drop (n + 1) xs)
+       = { 仮定より }
+       = x : xs
+-}
