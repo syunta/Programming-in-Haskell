@@ -340,3 +340,86 @@ ns = (x:xs) のとき :
        = { 仮定より }
        = x : xs
 -}
+
+-- 9.
+{-
+ -
+data Tree = Leaf Int | Node Tree Tree
+
+test :: Tree
+test = Node (Node (Leaf 1) (Leaf 2)) (Leaf 3)
+
+countleaves :: Tree -> Int
+countleaves (Leaf _)   = 1
+countleaves (Node r l) = countleaves r + countleaves l
+
+countnodes :: Tree -> Int
+countnodes (Leaf _)   = 0
+countnodes (Node r l) = 1 + countnodes r + countnodes l
+
+countleaves tree - countnodes tree = 1 が成り立つことをtreeに対する数学的帰納法で示す
+
+tree = Leaf x のとき :
+
+{左辺} = countleaves (Leaf x) - countnodes (Leaf x)
+       = { countleaves, countnodes を適用 }
+       = 1 - 0
+       = { - を適用 }
+       = 1
+
+tree = xs のとき、以下が成り立つと仮定する :
+
+countleaves xs - countnodes xs = 1
+
+xs = (Node r l) のとき :
+
+{左辺} = countleaves (Node r l) - countnodes (Node r l)
+       = { countleaves, countnodes を適用 }
+       = countleaves r + countleaves l - (1 + countnodes r + countnodes l)
+       = { 変形 }
+       = (countleaves r - countnodes r) + (countleaves l - countnodes l) - 1
+       = { 仮定より }
+       = 1 + 1 - 1
+       = { +,- を適用 }
+       = 1
+-}
+
+-- 10.
+{-
+
+data Expr = Val Int | Add Expr Expr
+
+type Code = [Op]
+data Op = PUSH Int | ADD
+
+comp :: Expr -> Code
+comp (Val n)   = [PUSH n]
+comp (Add x y) = comp x ++ comp y ++ [ADD]
+
+comp' e c = comp e ++ c からcomp'の再帰的な定義をeに対する数学的帰納法に似た手法で求める
+
+e = Val n のとき :
+
+{左辺} = comp' (Val n) c
+       = { 等式の定義より }
+       = comp (Val n) ++ c
+       = { comp を適用 }
+       = [PUSH n] ++ c
+       = { ++ の性質より }
+       = PUSH n : c
+
+e = Add x y のとき :
+
+{左辺} = comp' (Add x y) c
+       = { 等式の定義より }
+       = comp (Add x y) ++ c
+       = { comp を適用 }
+       = comp x ++ comp y ++ [ADD] ++ c
+       = { ++ 性質より }
+       = comp x ++ comp y ++ ADD : c
+       = { 等式の定義より }
+       = comp x ++ comp' y (ADD : c)
+       = { 等式の定義より }
+       = comp' x (comp' y (ADD : c))
+
+-}
